@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Mental Health Tracker{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold text-blue-600">MindCare</a>
+      <div class="space-x-6">
+        <a href="/" class="hover:text-blue-500">Home</a>
+        <a href="/tracker" class="hover:text-blue-500">Tracker</a>
+        <a href="/tips" class="hover:text-blue-500">Tips</a>
+        <a href="/articles" class="hover:text-blue-500">Articles</a>
+        {% if is_logged_in %}
+          <a href="/logout" class="hover:text-blue-500">Logout</a>
+        {% else %}
+          <a href="/login" class="hover:text-blue-500">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <!-- Content Section -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white py-6 mt-12 border-t">
+    <div class="container mx-auto px-6 text-center text-gray-500">
+      © 2025 MindCare by Shivam Jaiswal. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>

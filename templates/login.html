@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - MindCare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .bg-login-image {
+      background-image: url('/static/images/image3.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-login-image text-gray-800">
+
+  <!-- Login Form Container -->
+  <div class="w-full max-w-md bg-white bg-opacity-60 rounded-xl shadow-lg p-8">
+    <h1 class="text-2xl font-bold text-center mb-6">Login to MindCare</h1>
+
+    <form id="loginForm" method="POST" action="{{ url_for('login') }}" class="space-y-4">
+      <!-- Email -->
+      <div>
+        <label for="email" class="block font-medium">Email:</label>
+        <input type="email" id="email" name="email" required class="w-full border px-3 py-2 rounded-md" placeholder="Enter your email">
+      </div>
+
+      <!-- Password -->
+      <div>
+        <label for="password" class="block font-medium">Password:</label>
+        <input type="password" id="password" name="password" required class="w-full border px-3 py-2 rounded-md" placeholder="Enter your password">
+      </div>
+
+      <!-- Remember Me & Forgot Password -->
+      <div class="flex justify-between items-center text-sm">
+        <label class="inline-flex items-center">
+          <input type="checkbox" class="form-checkbox mr-2" id="rememberMe" name="rememberMe">
+          Remember Me
+        </label>
+        <a href="{{ url_for('forgotpassword') }}" class="text-blue-600 hover:underline">Forgot Password?</a>
+      </div>
+
+      <!-- Flask error message -->
+      {% if error %}
+        <div class="text-red-500 text-center">{{ error }}</div>
+      {% endif %}
+
+      <!-- Submit Button -->
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition">Login</button>
+    </form>
+
+    <div class="mt-4 text-center">
+      <p class="text-gray-700">Don't have an account? 
+        <a href="{{ url_for('signup') }}" class="text-blue-600 hover:underline">Sign Up</a>
+      </p>
+    </div>
+    <div class="mt-4 text-center">
+      <a href="{{ url_for('main.home') }}" class="inline-block text-sm text-blue-600 hover:underline hover:text-blue-800">
+        ← Back to Home
+      </a>
+    </div>
+  </div>
+
+  <!-- Remember Me Script -->
+  <script>
+    window.addEventListener('load', () => {
+      const savedEmail = localStorage.getItem('rememberEmail');
+      if (savedEmail) {
+        document.getElementById('email').value = savedEmail;
+        document.getElementById('rememberMe').checked = true;
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', () => {
+      const remember = document.getElementById('rememberMe').checked;
+      const email = document.getElementById('email').value;
+
+      if (remember) {
+        localStorage.setItem('rememberEmail', email);
+      } else {
+        localStorage.removeItem('rememberEmail');
+      }
+    });
+  </script>
+
+  
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { margin-bottom: 20px; }
+        .nav-buttons { margin-bottom: 20px; }
+        .nav-buttons button { margin-right: 10px; padding: 10px 20px; }
+        .chart-container { width: 80%; max-width: 900px; margin-bottom: 40px; }
+        table { border-collapse: collapse; width: 80%; max-width: 900px; margin-bottom: 40px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <div class="nav-buttons">
+        <button onclick="showView('user')">User View</button>
+        <button onclick="showView('city')">City View</button>
+        <button onclick="showView('date')">Date View</button>
+    </div>
+
+    <div id="userView" class="view">
+        <h2>User Point of View</h2>
+        <canvas id="userChart" class="chart-container"></canvas>
+        <table id="userTable">
+            <thead>
+                <tr>
+                    <th>User Email</th>
+                    <th>Avg Stress</th>
+                    <th>Avg Anxiety</th>
+                    <th>Avg Depression</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in user_data %}
+                <tr>
+                    <td>{{ user.email }}</td>
+                    <td>{{ "%.2f"|format(user.avg_stress) }}</td>
+                    <td>{{ "%.2f"|format(user.avg_anxiety) }}</td>
+                    <td>{{ "%.2f"|format(user.avg_depression) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="cityView" class="view" style="display:none;">
+        <h2>City Point of View</h2>
+        <canvas id="cityChart" class="chart-container"></canvas>
+        <table id="cityTable">
+            <thead>
+                <tr>
+                    <th>City</th>
+                    <th>Avg Stress</th>
+                    <th>Avg Anxiety</th>
+                    <th>Avg Depression</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for city in city_data %}
+                <tr>
+                    <td>{{ city.city }}</td>
+                    <td>{{ "%.2f"|format(city.avg_stress) }}</td>
+                    <td>{{ "%.2f"|format(city.avg_anxiety) }}</td>
+                    <td>{{ "%.2f"|format(city.avg_depression) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div id="dateView" class="view" style="display:none;">
+        <h2>Date Point of View</h2>
+        <canvas id="dateChart" class="chart-container"></canvas>
+    </div>
+
+    <script>
+        function showView(view) {
+            document.getElementById('userView').style.display = 'none';
+            document.getElementById('cityView').style.display = 'none';
+            document.getElementById('dateView').style.display = 'none';
+            document.getElementById(view + 'View').style.display = 'block';
+        }
+
+        // User Chart
+        const userCtx = document.getElementById('userChart').getContext('2d');
+        const userChart = new Chart(userCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for user in user_data %}'{{ user.email }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [
+                    {
+                        label: 'Avg Stress',
+                        data: [{% for user in user_data %}{{ user.avg_stress }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                    },
+                    {
+                        label: 'Avg Anxiety',
+                        data: [{% for user in user_data %}{{ user.avg_anxiety }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    },
+                    {
+                        label: 'Avg Depression',
+                        data: [{% for user in user_data %}{{ user.avg_depression }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // City Chart
+        const cityCtx = document.getElementById('cityChart').getContext('2d');
+        const cityChart = new Chart(cityCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for city in city_data %}'{{ city.city }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [
+                    {
+                        label: 'Avg Stress',
+                        data: [{% for city in city_data %}{{ city.avg_stress }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 99, 132, 0.6)'
+                    },
+                    {
+                        label: 'Avg Anxiety',
+                        data: [{% for city in city_data %}{{ city.avg_anxiety }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                    },
+                    {
+                        label: 'Avg Depression',
+                        data: [{% for city in city_data %}{{ city.avg_depression }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        backgroundColor: 'rgba(255, 206, 86, 0.6)'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        // Date Chart
+        const dateCtx = document.getElementById('dateChart').getContext('2d');
+        const dateChart = new Chart(dateCtx, {
+            type: 'line',
+            data: {
+                labels: [{% for date in date_data %}'{{ date.date }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                datasets: [
+                    {
+                        label: 'Avg Stress',
+                        data: [{% for date in date_data %}{{ date.avg_stress }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        fill: false,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Avg Anxiety',
+                        data: [{% for date in date_data %}{{ date.avg_anxiety }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        fill: false,
+                        tension: 0.1
+                    },
+                    {
+                        label: 'Avg Depression',
+                        data: [{% for date in date_data %}{{ date.avg_depression }}{% if not loop.last %}, {% endif %}{% endfor %}],
+                        borderColor: 'rgba(255, 206, 86, 1)',
+                        fill: false,
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

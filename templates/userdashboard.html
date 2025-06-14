@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>User Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Light Mode Styles */
+    body {
+      background-color: #f7fafc;
+      color: #1a202c;
+    }
+
+    nav {
+      background-color: #ffffff;
+    }
+
+    .card {
+      background-color: #ffffff;
+      color: #1a202c;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+      border-radius: 8px;
+      padding: 1.5rem;
+    }
+
+    a {
+      color: #3182ce;
+    }
+
+    a:hover {
+      color: #2b6cb0;
+    }
+
+    button {
+      background-color: #e2e8f0;
+      color: #1a202c;
+    }
+
+    button:hover {
+      background-color: #edf2f7;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+      background-color: #1a202c;
+      color: #f7fafc;
+    }
+
+    nav.dark-mode {
+      background-color: #2d3748;
+    }
+
+    .card.dark-mode {
+      background-color: #2d3748;
+      color: #e2e8f0;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Increase shadow for contrast */
+    }
+
+    a.dark-mode {
+      color: #63b3ed;
+    }
+
+    a.dark-mode:hover {
+      color: #4299e1;
+    }
+
+    button.dark-mode {
+      background-color: #4a5568;
+      color: #e2e8f0;
+    }
+
+    button.dark-mode:hover {
+      background-color: #2d3748;
+    }
+
+    /* Card sections */
+    .card h2, .card p, .card li {
+      color: inherit; /* Ensure proper text color based on theme */
+    }
+
+    .card ul {
+      color: inherit;
+    }
+
+    /* Tips and Chart section specific styles */
+    .card#tipsCard, .card#graphCard {
+      background-color: inherit;
+    }
+
+    .card#tipsCard ul {
+      color: inherit; /* Ensures list items are visible */
+    }
+
+    /* Chart Canvas */
+    #mentalHealthChart {
+      background-color: #ffffff;
+    }
+
+    /* Adjusting visibility on dark mode for text inside tips and chart */
+    .card h2, .card p, .card li {
+      color: #1a202c;
+    }
+
+    .card.dark-mode h2, .card.dark-mode p, .card.dark-mode li {
+      color: #e2e8f0; /* Light text for better contrast */
+    }
+
+    /* Enlarged chart container */
+    .card#graphCard.enlarged {
+      position: fixed;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90vw;
+      height: 80vh;
+      z-index: 1000;
+      padding: 2rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      background-color: white;
+    }
+
+    .card#graphCard.enlarged canvas#mentalHealthChart {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+  </style>
+</head>
+<body id="body" class="bg-gray-100 text-gray-800 transition-colors duration-500">
+  <nav id="nav" class="bg-white shadow-md transition-colors duration-500">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+      <a href="/" id="logo" class="text-2xl font-bold text-blue-600">MindCare</a>
+      <div class="space-x-6 flex items-center">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/tracker">Tracker</a>
+        <!-- <a href="/tips">Tips</a> -->
+        <a href="/articles">Articles</a>
+        <a href="/logout">Logout</a>
+        <button id="themeToggle" class="ml-4 px-3 py-1 bg-gray-300 rounded text-gray-800 focus:outline-none" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container mx-auto px-6 py-8">
+    <h1 class="text-3xl font-bold mb-6">Welcome, {{ username }}</h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div id="profileCard" class="card bg-white rounded-lg shadow p-6 transition-colors duration-500">
+        <h2 class="text-xl font-semibold mb-4">User Profile</h2>
+        <p><strong>Username:</strong> {{ username }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Phone:</strong> {{ phone }}</p>
+        <p><strong>Last Login:</strong> {{ last_login }}</p>
+        <!-- <a href="/profile" class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Edit Profile</a> -->
+      </div>
+
+      <div id="graphCard" class="card bg-white rounded-lg shadow p-6 transition-colors duration-500">
+        <h2 class="text-xl font-semibold mb-4 flex items-center justify-between">
+          Mental Health Tracker
+          <button id="refreshChartBtn" title="Refresh Chart" class="ml-2 px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none">
+            Refresh
+          </button>
+        </h2>
+        <canvas id="mentalHealthChart" width="300" height="150"></canvas>
+        <a href="/tracker" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-lg mt-4 inline-block">Get Test</a>
+
+      </div>
+
+      <div id="tipsCard" class="card bg-white rounded-lg shadow p-6 transition-colors duration-500">
+        <h2 class="text-xl font-semibold mb-4">Tips to Stay Calm</h2>
+        <ul class="list-disc list-inside space-y-2 text-gray-700">
+          <li>Practice deep breathing exercises daily.</li>
+          <li>Maintain a regular sleep schedule.</li>
+          <li>Engage in physical activity or exercise.</li>
+          <li>Stay connected with friends and family.</li>
+          <li>Take breaks and practice mindfulness.</li>
+        </ul>
+        <a href="/tips" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-full text-lg mt-4 inline-block">Get Tips</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initialize Chart.js
+      const ctx = document.getElementById('mentalHealthChart').getContext('2d');
+
+      // Data passed from backend
+      let labels = {{ labels|tojson }};
+      let stressValues = {{ stress_values|tojson }};
+      let anxietyValues = {{ anxiety_values|tojson }};
+      let depressionValues = {{ depression_values|tojson }};
+      let healthRiskAlertValues = {{ health_risk_alert_values|tojson }};
+      let productivityLevelValues = {{ productivity_level_values|tojson }};
+
+      const graphCard = document.getElementById('graphCard');
+
+      let mentalHealthChart;
+
+      function createChart() {
+        if (labels.length === 0 || stressValues.length === 0 || anxietyValues.length === 0 || depressionValues.length === 0 || healthRiskAlertValues.length === 0 || productivityLevelValues.length === 0) {
+          // Hide graph if no data
+          graphCard.style.display = 'none';
+          return;
+        } else {
+          graphCard.style.display = 'block';
+        }
+
+        if (mentalHealthChart) {
+          mentalHealthChart.destroy();
+        }
+
+        mentalHealthChart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Stress Level',
+                data: stressValues,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: 'Anxiety Level',
+                data: anxietyValues,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: 'Depression Level',
+                data: depressionValues,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: 'Health Risk Alert',
+                data: healthRiskAlertValues,
+                borderColor: 'rgba(255, 206, 86, 1)',
+                backgroundColor: 'rgba(255, 206, 86, 0.2)',
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: 'Productivity Level',
+                data: productivityLevelValues,
+                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                fill: true,
+                tension: 0.3
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 20
+              }
+            }
+          }
+        });
+
+        // Add double-click event listener to toggle enlarge/shrink
+        graphCard.addEventListener('dblclick', () => {
+          graphCard.classList.toggle('enlarged');
+          mentalHealthChart.resize();
+        });
+      }
+
+      createChart();
+
+      // Function to fetch updated tracker data from API
+      async function fetchTrackerData() {
+        try {
+          const response = await fetch('/api/user/tracker_data');
+          if (!response.ok) {
+            console.error('Failed to fetch tracker data:', response.statusText);
+            return;
+          }
+          const data = await response.json();
+          labels = data.labels;
+          stressValues = data.stress_values;
+          anxietyValues = data.anxiety_values;
+          depressionValues = data.depression_values;
+          healthRiskAlertValues = data.health_risk_alert_values;
+          productivityLevelValues = data.productivity_level_values;
+          createChart();
+        } catch (error) {
+          console.error('Error fetching tracker data:', error);
+        }
+      }
+
+      // Polling to refresh chart data every 30 seconds
+      setInterval(fetchTrackerData, 30000);
+
+      // Refresh button event listener to fetch last 10 data points
+      const refreshBtn = document.getElementById('refreshChartBtn');
+      refreshBtn.addEventListener('click', async () => {
+        try {
+          const response = await fetch('/api/user/tracker_data?limit=10');
+          if (!response.ok) {
+            console.error('Failed to fetch tracker data:', response.statusText);
+            return;
+          }
+          const data = await response.json();
+          labels = data.labels;
+          stressValues = data.stress_values;
+          anxietyValues = data.anxiety_values;
+          depressionValues = data.depression_values;
+          healthRiskAlertValues = data.health_risk_alert_values;
+          productivityLevelValues = data.productivity_level_values;
+          createChart();
+        } catch (error) {
+          console.error('Error fetching tracker data:', error);
+        }
+      });
+    });
+
+    // Dark Mode Toggle Logic
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const body = document.getElementById('body');
+    const nav = document.getElementById('nav');
+    const profileCard = document.getElementById('profileCard');
+    const graphCard = document.getElementById('graphCard');
+    const tipsCard = document.getElementById('tipsCard');
+    const logo = document.getElementById('logo');
+    const links = document.querySelectorAll('nav a');
+
+    function toggleDarkMode(apply) {
+      const method = apply ? 'add' : 'remove';
+      body.classList[method]('dark-mode');
+      nav.classList[method]('dark-mode');
+      profileCard.classList[method]('dark-mode');
+      graphCard.classList[method]('dark-mode');
+      tipsCard.classList[method]('dark-mode');
+      logo.classList[method]('dark-mode');
+      links.forEach(link => link.classList[method]('dark-mode'));
+      themeToggleBtn.textContent = apply ? '☀️' : '🌙';
+    }
+
+    // Load theme on page load
+    const savedTheme = localStorage.getItem('theme');
+    toggleDarkMode(savedTheme === 'dark');
+
+    // Toggle theme on button click
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = body.classList.contains('dark-mode');
+      toggleDarkMode(!isDark);
+      localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    });
+  </script>
+
+    <!-- Footer -->
+  <footer class="bg-transparent dark:bg-gray-800 text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+    © 2025 MindCare by Shivam Jaiswal. All rights reserved.
+  </footer>
+</body>
+</html>

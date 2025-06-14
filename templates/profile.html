@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+  <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+    <h2 class="text-2xl font-bold text-center mb-6">Update Your Profile</h2>
+    {% if error %}
+      <p class="text-red-500 mb-4 text-center">{{ error }}</p>
+    {% endif %}
+    {% if message %}
+      <p class="text-green-600 mb-4 text-center">{{ message }}</p>
+    {% endif %}
+    <form method="POST" action="{{ url_for('main.profile') }}">
+      <label class="block mb-2 font-medium" for="username">Username:</label>
+      <input type="text" id="username" name="username" value="{{ user.username }}" required class="w-full border px-3 py-2 rounded-md mb-4" />
+      
+      <label class="block mb-2 font-medium" for="email">Email:</label>
+      <input type="email" id="email" name="email" value="{{ user.email }}" required class="w-full border px-3 py-2 rounded-md mb-4" />
+      
+      <label class="block mb-2 font-medium" for="phone">Phone:</label>
+      <input type="text" id="phone" name="phone" value="{{ user.phone }}" class="w-full border px-3 py-2 rounded-md mb-4" />
+      
+      <label class="block mb-2 font-medium" for="password">New Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter new password (leave blank to keep current)" class="w-full border px-3 py-2 rounded-md mb-4" />
+      
+      <label class="block mb-2 font-medium" for="confirm_password">Confirm New Password:</label>
+      <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm new password" class="w-full border px-3 py-2 rounded-md mb-4" />
+      
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Update Profile</button>
+    </form>
+    <a href="{{ url_for('main.userdashboard') }}" class="block mt-4 text-center text-blue-600 hover:underline">Back to Dashboard</a>
+  </div>
+</body>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Mental Health Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- SheetJS CDN for Excel download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+
+  <style>
+    /* Adding background image that is adaptive */
+    .adaptive-background {
+      background-image: url('https://via.placeholder.com/1920x1080'); /* Replace with your image */
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-6 dark:bg-gray-900 dark:text-white adaptive-background">
+  
+
+  <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+    <h1 class="text-2xl font-bold mb-4 text-center">Daily Mental Health Tracker</h1>
+
+    <!-- Form -->
+    <form id="trackerForm" class="space-y-4">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="block font-medium text-gray-800 dark:text-gray-200">Gender:</label>
+          <select id="gender" name="gender" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium text-gray-800 dark:text-gray-200">Age:</label>
+          <input type="number" id="age" name="age" min="10" max="100" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        </div>
+        <div>
+          <label class="block font-medium text-gray-800 dark:text-gray-200">Profession:</label>
+          <select id="profession" name="profession" class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" required>
+            <option value="">Select Profession</option>
+            <option value="student">Student</option>
+            <option value="working-professional">Working Professional</option>
+          </select>
+        </div>
+        <div>
+          <label class="block font-medium text-gray-800 dark:text-gray-200">Occupation:</label>
+          <input type="text" id="occupation" name="occupation" class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" required disabled>
+        </div>
+        <div>
+          <label class="block font-medium text-gray-800 dark:text-gray-200">Heart Rate (BPM):</label>
+          <input type="number" id="heartRate" name="heartRate" min="40" max="200" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+        </div>
+        <div>
+          <label class="block font-medium text-gray-800 dark:text-gray-200">Mood:</label>
+          <select id="mood" name="mood" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+            <option value="">Select Mood</option>
+            <option value="Very Bad">Very Bad</option>
+            <option value="Bad">Bad</option>
+            <option value="Neutral">Neutral</option>
+            <option value="Good">Good</option>
+            <option value="Happy">Happy</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200 mt-4">Study Satisfaction:</label>
+        <select id="studySatisfaction" name="studySatisfaction" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+          <option value="">Select Study Satisfaction</option>
+          <option value="Very Bad">Very Bad</option>
+          <option value="Bad">Bad</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Good">Good</option>
+          <option value="Happy">Happy</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200 mt-4">Job Satisfaction:</label>
+        <select id="jobSatisfaction" name="jobSatisfaction" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+          <option value="">Select Job Satisfaction</option>
+          <option value="Very Bad">Very Bad</option>
+          <option value="Bad">Bad</option>
+          <option value="Neutral">Neutral</option>
+          <option value="Good">Good</option>
+          <option value="Happy">Happy</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200 mt-4">Financial Stress:</label>
+        <select id="financialStress" name="financialStress" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+          <option value="">Select Financial Stress</option>
+          <option value="No Stress">No Stress</option>
+          <option value="Low Stress">Low Stress</option>
+          <option value="Moderate Stress">Moderate Stress</option>
+          <option value="High Stress">High Stress</option>
+          <option value="Severe Stress">Severe Stress</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200 mt-4">City:</label>
+        <input type="text" id="city" name="city" placeholder="Enter your city" class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" required>
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200">Sleep (hours):</label>
+        <input type="number" id="sleep" name="sleep" min="0" max="24" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200">Activity Level:</label>
+        <select id="activity" name="activity" required class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block font-medium text-gray-800 dark:text-gray-200">Notes (optional):</label>
+        <textarea id="notes" name="notes" rows="3" class="w-full border px-3 py-2 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"></textarea>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Submit</button>
+    </form>
+
+    <!-- Result -->
+    <div id="trackerResult" class="mt-6 hidden">
+      <h2 class="text-xl font-semibold mb-2">Today's Summary</h2>
+      <ul id="resultList" class="space-y-1 text-gray-700 dark:text-gray-300"></ul>
+
+      <!-- Chart -->
+      <canvas id="stressChart" width="400" height="200" class="mt-6"></canvas>
+
+      <!-- Productivity Tip -->
+      <div id="productivityTip" class="mt-4 p-4 bg-yellow-100 dark:bg-yellow-700 rounded-md text-yellow-800 dark:text-yellow-200 hidden"></div>
+
+      <!-- Trivia -->
+      <div id="trivia" class="mt-4 p-4 bg-blue-100 dark:bg-blue-700 rounded-md text-blue-800 dark:text-blue-200 hidden"></div>
+
+      <!-- Debug: Remove hidden class initially to test visibility -->
+      <script>
+        document.getElementById('productivityTip').classList.add('hidden');
+        document.getElementById('trivia').classList.add('hidden');
+      </script>
+
+  <!-- Back to Dashboard Button -->
+  <a href="{{ url_for('back_to_dashboard') }}" class="mt-4 block text-center bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">
+    Back to Dashboard
+  </a>
+
+      <!-- Download Button -->
+      <button id="downloadBtn" onclick="downloadExcel()" class="mt-4 w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700">Download Data as Excel</button>
+    </div>
+  </div>
+
+  <script>
+    const professionSelect = document.getElementById('profession');
+    const occupationInput = document.getElementById('occupation');
+
+    professionSelect.addEventListener('change', function() {
+      if (professionSelect.value === 'student') {
+        occupationInput.disabled = true;
+        occupationInput.value = ''; // Clear the occupation input if it's disabled
+        // Disable Job Satisfaction field for students
+        document.getElementById('jobSatisfaction').disabled = true;
+        document.getElementById('jobSatisfaction').value = '';
+        // Enable Study Satisfaction field for students
+        document.getElementById('studySatisfaction').disabled = false;
+      } else if (professionSelect.value === 'working-professional') {
+        occupationInput.disabled = false;
+        // Enable Job Satisfaction field for working professionals
+        document.getElementById('jobSatisfaction').disabled = false;
+        // Disable Study Satisfaction field for working professionals
+        document.getElementById('studySatisfaction').disabled = true;
+        document.getElementById('studySatisfaction').value = '';
+      }
+    });
+
+    const form = document.getElementById('trackerForm');
+    const resultDiv = document.getElementById('trackerResult');
+    const resultList = document.getElementById('resultList');
+    const ctx = document.getElementById('stressChart').getContext('2d');
+
+    let chart;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const gender = data.get('gender');
+      const age = data.get('age');
+      const profession = data.get('profession');
+      const occupation = data.get('occupation');
+      const heartRate = data.get('heartRate');
+      const mood = data.get('mood');
+      const sleep = data.get('sleep');
+      const activity = data.get('activity');
+      const notes = data.get('notes');
+      const studySatisfaction = data.get('studySatisfaction');
+      const jobSatisfaction = data.get('jobSatisfaction');
+      const financialStress = data.get('financialStress');
+      const city = data.get('city');
+
+      fetch('/submit_tracker', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          gender,
+          age,
+          profession,
+          occupation,
+          heartRate,
+          mood,
+          sleep,
+          activity,
+          notes,
+          studySatisfaction,
+          jobSatisfaction,
+          financialStress,
+          city
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(text) });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.error) {
+          alert('Error: ' + data.error);
+          return;
+        }
+
+        const stressScore = data.stress_score;
+        const anxietyScore = data.anxiety_score;
+        const depressionScore = data.depression_score;
+        const healthRiskAlertScore = data.health_risk_alert_score;
+        const productivityLevelScore = data.productivity_level_score;
+
+        // Show results
+        resultList.innerHTML = `
+          <li><strong>Stress Score:</strong> ${stressScore}</li>
+          <li><strong>Anxiety Score:</strong> ${anxietyScore}</li>
+          <li><strong>Depression Score:</strong> ${depressionScore}</li>
+          <li><strong>Health Risk Alert Score:</strong> ${healthRiskAlertScore}</li>
+          <li><strong>Productivity Level Score:</strong> ${productivityLevelScore}</li>
+        `;
+        resultDiv.classList.remove('hidden');
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Stress Score', 'Anxiety Score', 'Depression Score', 'Health Risk Alert', 'Productivity Level'],
+            datasets: [{
+              label: 'Your Mental Health Metrics',
+              data: [stressScore, anxietyScore, depressionScore, healthRiskAlertScore, productivityLevelScore],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 20
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        alert('Error submitting data: ' + error);
+      });
+    });
+
+    function goBackToHome() {
+      window.location.href = '/'; // Redirect to home route
+    }
+
+    function downloadExcel() {
+      const formData = {
+        gender: document.getElementById('gender').value,
+        age: document.getElementById('age').value,
+        profession: document.getElementById('profession').value,
+        occupation: document.getElementById('occupation').value,
+        heartRate: document.getElementById('heartRate').value,
+        mood: document.getElementById('mood').value,
+        sleep: document.getElementById('sleep').value,
+        activity: document.getElementById('activity').value,
+        notes: document.getElementById('notes').value,
+        studySatisfaction: document.getElementById('studySatisfaction').value,
+        jobSatisfaction: document.getElementById('jobSatisfaction').value,
+        financialStress: document.getElementById('financialStress').value,
+        city: document.getElementById('city').value
+      };
+
+      const ws = XLSX.utils.json_to_sheet([formData]);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Mental Health Data');
+      XLSX.writeFile(wb, 'mental_health_data.xlsx');
+    }
+  </script>
+    <!-- Footer -->
+  <footer class="bg-white dark:bg-gray-800 text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+    © 2025 MindCare by Shivam Jaiswal. All rights reserved.
+  </footer>
+  <script>
+    // Update the form submission handler to display tips and trivia
+    const form = document.getElementById('trackerForm');
+    const resultDiv = document.getElementById('trackerResult');
+    const resultList = document.getElementById('resultList');
+    const productivityTipDiv = document.getElementById('productivityTip');
+    const triviaDiv = document.getElementById('trivia');
+    const ctx = document.getElementById('stressChart').getContext('2d');
+
+    let chart;
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const gender = data.get('gender');
+      const age = data.get('age');
+      const profession = data.get('profession');
+      const occupation = data.get('occupation');
+      const heartRate = data.get('heartRate');
+      const mood = data.get('mood');
+      const sleep = data.get('sleep');
+      const activity = data.get('activity');
+      const notes = data.get('notes');
+      const studySatisfaction = data.get('studySatisfaction');
+      const jobSatisfaction = data.get('jobSatisfaction');
+      const financialStress = data.get('financialStress');
+      const city = data.get('city');
+
+      fetch('/submit_tracker', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          gender,
+          age,
+          profession,
+          occupation,
+          heartRate,
+          mood,
+          sleep,
+          activity,
+          notes,
+          studySatisfaction,
+          jobSatisfaction,
+          financialStress,
+          city
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          return response.text().then(text => { throw new Error(text) });
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.error) {
+          alert('Error: ' + data.error);
+          return;
+        }
+
+        const stressScore = data.stress_score;
+        const anxietyScore = data.anxiety_score;
+        const depressionScore = data.depression_score;
+        const healthRiskAlertScore = data.health_risk_alert_score;
+        const productivityLevelScore = data.productivity_level_score;
+        const productivityTip = data.productivity_tip;
+        const trivia = data.trivia;
+
+        // Show results
+        resultList.innerHTML = `
+          <li><strong>Stress Score:</strong> ${stressScore}</li>
+          <li><strong>Anxiety Score:</strong> ${anxietyScore}</li>
+          <li><strong>Depression Score:</strong> ${depressionScore}</li>
+          <li><strong>Health Risk Alert Score:</strong> ${healthRiskAlertScore}</li>
+          <li><strong>Productivity Level Score:</strong> ${productivityLevelScore}</li>
+        `;
+        resultDiv.classList.remove('hidden');
+
+      // Show productivity tip and trivia
+      productivityTipDiv.textContent = "Tip to improve productivity: " + productivityTip;
+      productivityTipDiv.classList.remove('hidden');
+      triviaDiv.textContent = "Trivia: " + trivia;
+      triviaDiv.classList.remove('hidden');
+
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Stress Score', 'Anxiety Score', 'Depression Score', 'Health Risk Alert', 'Productivity Level'],
+            datasets: [{
+              label: 'Your Mental Health Metrics',
+              data: [stressScore, anxietyScore, depressionScore, healthRiskAlertScore, productivityLevelScore],
+              backgroundColor: [
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(153, 102, 255, 0.6)'
+              ],
+              borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 20
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        alert('Error submitting data: ' + error);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Articles - MindCare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+</head>
+<body class="bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-white">
+
+  <!-- Navbar -->
+  <nav class="bg-white dark:bg-gray-800 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold text-blue-600 dark:text-blue-400">MindCare</a>
+      <div class="space-x-6 flex items-center">
+        <a href="/" class="hover:text-blue-500 dark:hover:text-blue-400">Home</a>
+        <a href="/tracker" class="hover:text-blue-500 dark:hover:text-blue-400">Tracker</a>
+        <a href="/tips" class="hover:text-blue-500 dark:hover:text-blue-400">Tips</a>
+        <a href="/articles" class="text-blue-600 dark:text-blue-400 font-semibold">Articles</a>
+        <a href="/login" class="hover:text-blue-500 dark:hover:text-blue-400">Login</a>
+        <button id="darkToggle" class="ml-2 text-xl focus:outline-none" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Heading -->
+  <header class="text-center mt-12 mb-8">
+    <h1 class="text-3xl font-bold">Mental Health Articles</h1>
+    <p class="text-gray-600 dark:text-gray-300 mt-2">Explore articles to improve your mental well-being and knowledge</p>
+  </header>
+
+  <!-- Articles Section -->
+  <main class="max-w-6xl mx-auto px-6 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 pb-12">
+    
+    <!-- Article Card -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
+      <h2 class="text-xl font-semibold mb-2">Understanding Anxiety</h2>
+      <p class="text-gray-700 dark:text-gray-300">Discover the causes, symptoms, and treatments for anxiety in modern life.</p>
+      <a href="https://www.nimh.nih.gov/health/topics/anxiety-disorders" target="_blank" class="text-blue-600 dark:text-blue-400 mt-3 inline-block">Read more →</a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
+      <h2 class="text-xl font-semibold mb-2">Stress Management Techniques</h2>
+      <p class="text-gray-700 dark:text-gray-300">Effective ways to handle stress using mindfulness and healthy habits.</p>
+      <a href="https://www.apa.org/topics/stress/tips" target="_blank" class="text-blue-600 dark:text-blue-400 mt-3 inline-block">Read more →</a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
+      <h2 class="text-xl font-semibold mb-2">Dealing with Depression</h2>
+      <p class="text-gray-700 dark:text-gray-300">Recognize signs of depression and explore ways to seek support and help.</p>
+      <a href="https://www.helpguide.org/articles/depression/coping-with-depression.htm" target="_blank" class="text-blue-600 dark:text-blue-400 mt-3 inline-block">Read more →</a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
+     <h2 class="text-xl font-semibold mb-2">Benefits of Meditation</h2>
+     <p class="text-gray-700 dark:text-gray-300">Explore how daily meditation can boost emotional health and reduce anxiety.</p>
+     <a href="https://www.headspace.com/meditation/benefits" target="_blank" class="text-blue-600 dark:text-blue-400 mt-3 inline-block">Read more →</a>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
+     <h2 class="text-xl font-semibold mb-2">Mental Health in the Workplace</h2>
+     <p class="text-gray-700 dark:text-gray-300">Learn how to foster a healthier and more supportive work environment.</p>
+     <a href="https://www.who.int/news-room/fact-sheets/detail/mental-health-at-work" target="_blank" class="text-blue-600 dark:text-blue-400 mt-3 inline-block">Read more →</a>
+    </div>
+
+   <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow hover:shadow-lg transition duration-300">
+     <h2 class="text-xl font-semibold mb-2">How Sleep Affects Mental Health</h2>
+     <p class="text-gray-700 dark:text-gray-300">Discover the strong link between sleep patterns and mental well-being.</p>
+     <a href="https://www.sleepfoundation.org/mental-health" target="_blank" class="text-blue-600 dark:text-blue-400 mt-3 inline-block">Read more →</a>
+    </div>
+
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white dark:bg-gray-800 text-center py-6 text-sm text-gray-500 dark:text-gray-400">
+    © 2025 MindCare by Shivam Jaiswal. All rights reserved.
+  </footer>
+
+  <!-- Dark Mode Toggle -->
+  <script>
+    const toggleBtn = document.getElementById('darkToggle');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('theme') === 'dark') {
+      html.classList.add('dark');
+      toggleBtn.textContent = '☀️';
+    }
+
+    toggleBtn.addEventListener('click', () => {
+      const isDark = html.classList.toggle('dark');
+      toggleBtn.textContent = isDark ? '☀️' : '🌙';
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+  </script>
+
+</body>
+</html>
